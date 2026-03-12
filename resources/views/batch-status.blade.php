@@ -30,13 +30,19 @@
                 </div>
             @endif
 
-            <form action="{{ url('/batch-status') }}" method="POST" class="flex items-end gap-4">
+            <form action="{{ url('/batch-status') }}" method="POST">
                 @csrf
-                <div class="flex-grow">
-                    <label for="system_ids" class="block text-sm font-medium text-gray-700 mb-1">System IDs to Sync (comma separated)</label>
-                    <input type="text" name="system_ids" id="system_ids" value="9054,12407" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                <div class="space-y-4">
+                    <div>
+                        <label for="system_ids" class="block text-sm font-medium text-gray-700 mb-1">System IDs to Sync (comma separated)</label>
+                        <input type="text" name="system_ids" id="system_ids" value="9054,12407" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                    </div>
+                    <div>
+                        <label for="payload" class="block text-sm font-medium text-gray-700 mb-1">Job Payload (JSON)</label>
+                        <textarea name="payload" id="payload" rows="8" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border font-mono">{{ json_encode([ 'run_update_sql' => [ 'update ~DB_PREFIX~manager set managerNAME=? where managerID = ?', ['Last Updated', 14], ], 'run_select_sql' => [ 'select count(1) as count from ~DB_PREFIX~manager', [], ], 'system_info' => ['end here'], ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</textarea>
+                    </div>
                 </div>
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700 transition shadow-sm">
+                <button type="submit" class="mt-4 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700 transition shadow-sm">
                     Run Batch
                 </button>
             </form>

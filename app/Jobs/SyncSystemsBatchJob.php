@@ -38,8 +38,22 @@ class SyncSystemsBatchJob implements ShouldQueue
             return;
         }
 
+        $payloadData = [
+            'run_update_sql' => [
+                'update ~DB_PREFIX~manager set managerNAME=? where managerID = ?',
+                ['Last Updated', 14],
+            ],
+            'run_select_sql' => [
+                'select count(1) as count from ~DB_PREFIX~manager',
+                [],
+            ],
+            'system_info' => ['end here'],
+        ];
+
+        $payloadJson = (string) json_encode($payloadData);
+
         $jobs = $systems
-            ->map(fn (System $system) => new TestQueueJob((int) $system->id))
+            ->map(fn (System $system) => new TestQueueJob((int) $system->id, $payloadJson))
             ->all();
 
         $batch = Bus::batch($jobs)

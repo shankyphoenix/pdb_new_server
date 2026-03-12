@@ -41,8 +41,14 @@ class BatchStatusController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $inputIds = $request->input('system_ids', '9054,12407');
-        $ids = array_filter(explode(',', $inputIds));
+        $validated = $request->validate([
+            'system_ids' => ['required', 'string'],
+            'payload' => ['required', 'string', 'json'],
+        ]);
+
+        $payloadJson = $validated['payload'];
+
+        $ids = array_filter(explode(',', $validated['system_ids']));
 
         $systems = System::query()
             ->where('is_synced', 1)
@@ -54,7 +60,7 @@ class BatchStatusController extends Controller
         }
 
         $jobs = $systems
-            ->map(fn (System $system) => new TestQueueJob((int) $system->id))
+            ->map(fn (System $system) => new TestQueueJob((int) $system->id, $payloadJson))
             ->all();
 
         $batch = Bus::batch($jobs)

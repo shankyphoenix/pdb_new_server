@@ -22,11 +22,17 @@ class TestQueueJob implements ShouldQueue
     public int $systemId;
 
     /**
+     * The JSON payload for the job.
+     */
+    public string $payloadJson;
+
+    /**
      * Create a new job instance.
      */
-    public function __construct(int $systemId)
+    public function __construct(int $systemId, string $payloadJson)
     {
         $this->systemId = $systemId;
+        $this->payloadJson = $payloadJson;
     }
 
     /**
@@ -46,26 +52,8 @@ class TestQueueJob implements ShouldQueue
             throw new RuntimeException('Missing SYSTEM_JOB_ENCRYPT_PASSWORD in .env.');
         }
 
-        $payloadData = [
-            'run_update_sql' => [
-                'update ~DB_PREFIX~manager set managerNAME=? where managerID = ?',
-                ['Last Updated', 14],
-            ],
-            'run_select_sql' => [
-                'select count(1) as count from ~DB_PREFIX~manager',
-                [],
-            ],
-            'system_info' => ['end here'],
-        ];
-
-        $payloadJson = json_encode($payloadData);
-
-        if ($payloadJson === false) {
-            throw new RuntimeException('Failed to build job payload JSON.');
-        }
-
         // JS btoa(...) equivalent for ASCII payload content.
-        $payload = base64_encode($payloadJson);
+        $payload = base64_encode($this->payloadJson);
         $encrypted_payload = CryptoUtility::encryptData($payload, $jobPassword);
 
         if ($encrypted_payload === '') {
