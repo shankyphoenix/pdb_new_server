@@ -79,7 +79,7 @@ class TestQueueJob implements ShouldQueue
             if ($count > 0) {
 
            
-                $date = new \DateTime("now", new DateTimeZone("Asia/Kolkata"));
+                $date = new \DateTime("now", new \DateTimeZone("Asia/Kolkata"));
 
                 Redis::set('batch:lastest:updated_at', $date->format('Y-m-d H:i:s'));
 
