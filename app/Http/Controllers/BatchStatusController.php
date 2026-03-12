@@ -16,7 +16,7 @@ class BatchStatusController extends Controller
     public function index(): View
     {
         // Fetch all keys matching the pattern from the default Redis connection.
-        $keys = Redis::keys('batch:lastest:*');
+        $keys = Redis::keys('batch:latest:*');
         $data = [];
 
         // Get the configured prefix to correctly strip it from the keys returned by Redis::keys().
@@ -46,7 +46,7 @@ class BatchStatusController extends Controller
             'payload' => ['required', 'string', 'json'],
         ]);
 
-        Redis::del('batch:lastest:result');
+        Redis::del('batch:latest:result');
 
         $payloadJson = $validated['payload'];
 
@@ -68,7 +68,7 @@ class BatchStatusController extends Controller
         $batch = Bus::batch($jobs)
             ->name('Sync systems batch (Web Trigger)')
             ->then(function (Batch $batch) {
-                $total = Redis::get('batch:lastest:result');
+                $total = Redis::get('batch:latest:result');
                 \Log::info("BatchStatusController: Batch {$batch->id} finished. Total aggregate count: {$total}");
             })
             ->dispatch();
