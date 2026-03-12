@@ -77,23 +77,23 @@ class TestQueueJob implements ShouldQueue
 
             
 
-            Redis::set("batch:lastest:systems:{$this->systemId}:result", json_encode($body['result'] ?? []));
+            Redis::set("batch:latest:systems:{$this->systemId}:result", json_encode($body['result'] ?? []));
 
             if ($count > 0) {
 
            
                 $date = new \DateTime("now", new \DateTimeZone("Asia/Kolkata"));
 
-                Redis::set('batch:lastest:updated_at', $date->format('Y-m-d H:i:s'));
+                Redis::set('batch:latest:updated_at', $date->format('Y-m-d H:i:s'));
 
-                Redis::set('batch:lastest:batch_id', $this->batchId);
+                Redis::set('batch:latest:batch_id', $this->batchId);
 
 
 
                 if (is_numeric($count)) {
-                    Redis::incrBy('batch:lastest:result', (int) $count);
+                    Redis::incrBy('batch:latest:result', (int) $count);
                 } else {
-                    Redis::append('batch:lastest:other_results', (string) $count);
+                    Redis::append('batch:latest:other_results', (string) $count);
                 }
 
                 $latestResponse = json_encode([

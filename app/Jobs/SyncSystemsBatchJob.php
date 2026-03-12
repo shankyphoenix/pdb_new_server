@@ -59,7 +59,7 @@ class SyncSystemsBatchJob implements ShouldQueue
         $batch = Bus::batch($jobs)
             ->name('Sync systems batch')
             ->then(function (Batch $batch) {
-                $total = Redis::get('batch:lastest:result');
+                $total = Redis::get('batch:latest:result');
                 \Log::info("SyncSystemsBatchJob: Batch {$batch->id} finished. Total aggregate count: {$total}");
                 // Optional: Clean up the key after processing
                 //Redis::del('batch:'.$batch->id.':aggregate');

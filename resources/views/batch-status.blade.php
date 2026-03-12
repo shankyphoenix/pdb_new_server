@@ -11,7 +11,7 @@
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <div>
                 <h1 class="text-xl font-bold text-gray-800">Batch Latest Status</h1>
-                <p class="text-sm text-gray-600 mt-1">Pattern: <code class="bg-gray-100 px-1 py-0.5 rounded text-red-500 font-mono">batch:lastest:*</code></p>
+                <p class="text-sm text-gray-600 mt-1">Pattern: <code class="bg-gray-100 px-1 py-0.5 rounded text-red-500 font-mono">batch:latest:*</code></p>
             </div>
             <a href="{{ url()->current() }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition">
                 Refresh
