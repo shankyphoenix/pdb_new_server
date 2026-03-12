@@ -18,6 +18,30 @@
             </a>
         </div>
         
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            @if (session('status'))
+                <div class="mb-4 p-4 bg-green-100 text-green-700 border-l-4 border-green-500 rounded">
+                    {{ session('status') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="mb-4 p-4 bg-red-100 text-red-700 border-l-4 border-red-500 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <form action="{{ url('/batch-status') }}" method="POST" class="flex items-end gap-4">
+                @csrf
+                <div class="flex-grow">
+                    <label for="system_ids" class="block text-sm font-medium text-gray-700 mb-1">System IDs to Sync (comma separated)</label>
+                    <input type="text" name="system_ids" id="system_ids" value="9054,12407" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700 transition shadow-sm">
+                    Run Batch
+                </button>
+            </form>
+        </div>
+
         <div class="p-0">
             @if(empty($data))
                 <div class="p-6 bg-yellow-50 text-yellow-700 border-l-4 border-yellow-400">
