@@ -75,7 +75,10 @@ class TestQueueJob implements ShouldQueue
             $body = $response->json();
             $count = ResponseParserUtility::parseSelectCount($body);
 
-            \Log::info('Count is ........................', [$count]);
+            
+
+            Redis::set("batch:lastest:system{$this->systemId}:result", json_encode($body['result'] ?? []));
+
             if ($count > 0) {
 
            
@@ -84,6 +87,8 @@ class TestQueueJob implements ShouldQueue
                 Redis::set('batch:lastest:updated_at', $date->format('Y-m-d H:i:s'));
 
                 Redis::set('batch:lastest:batch_id', $this->batchId);
+
+
 
                 if (is_numeric($count)) {
                     Redis::incrBy('batch:lastest:result', (int) $count);
