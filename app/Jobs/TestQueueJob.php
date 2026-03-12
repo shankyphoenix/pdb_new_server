@@ -77,7 +77,12 @@ class TestQueueJob implements ShouldQueue
 
             \Log::info('Count is ........................', [$count]);
             if ($count > 0) {
-                Redis::set('batch:lastest:updated_at', date("Y-m-d H:i:s"));
+
+           
+                $date = new DateTime("now", new DateTimeZone("Asia/Kolkata"));
+
+                Redis::set('batch:lastest:updated_at', $date->format('Y-m-d H:i:s'));
+
                 Redis::set('batch:lastest:batch_id', $this->batchId);
 
                 if (is_numeric($count)) {

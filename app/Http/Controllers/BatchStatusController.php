@@ -46,6 +46,8 @@ class BatchStatusController extends Controller
             'payload' => ['required', 'string', 'json'],
         ]);
 
+        Redis::del('batch:lastest:result');
+
         $payloadJson = $validated['payload'];
 
         $ids = array_filter(explode(',', $validated['system_ids']));
