@@ -77,7 +77,7 @@ class TestQueueJob implements ShouldQueue
 
             
 
-            Redis::set("batch:lastest:system{$this->systemId}:result", json_encode($body['result'] ?? []));
+            Redis::set("batch:lastest:systems:{$this->systemId}:result", json_encode($body['result'] ?? []));
 
             if ($count > 0) {
 
