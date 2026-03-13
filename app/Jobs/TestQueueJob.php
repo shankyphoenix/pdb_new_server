@@ -82,7 +82,7 @@ class TestQueueJob implements ShouldQueue
             
             $latestResponse = json_encode([
                 'system_id' => $this->systemId,
-                'system_name' => $this->company_name,
+                'system_name' => $system->company_name,
                 'url' => $url,
                 'status' => $response->status(),
                 'body' => $response->body(),
