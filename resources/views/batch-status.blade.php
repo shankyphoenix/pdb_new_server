@@ -54,6 +54,24 @@
                     No data found in Redis for this pattern.
                 </div>
             @else
+                @php
+                    $formatDisplayValue = static function ($value) {
+                        if (is_array($value) || is_object($value)) {
+                            return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                        }
+
+                        if ($value === null) {
+                            return 'N/A';
+                        }
+
+                        if (is_bool($value)) {
+                            return $value ? 'true' : 'false';
+                        }
+
+                        return (string) $value;
+                    };
+                @endphp
+
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -62,20 +80,100 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
+                        @php
+                            $domain_result = [];        
+                        @endphp
                         @foreach($data as $key => $value)
+
+
+                        @if(str_contains($key, 'batch:latest:systems'))
+                            @php
+                                $parsed = json_decode($value, true);
+                                if(isset($parsed['system_info']['domain_id']) && isset($parsed['run_select_sql']['result'])){
+                                    $domain_result[$parsed['system_info']['domain_id']] = $parsed['run_select_sql']['result'];
+                                }
+                            @endphp
+                        @endif                                                
+
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono">
                                     {{ $key }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 break-all font-mono">
-                                    {{ $value }}
+                                <td class="px-6 py-4 text-sm text-gray-600 break-all font-mono whitespace-pre-wrap">
+                                    {{ $formatDisplayValue($value) }}
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+
+                <table width="100%" class="mt-6 border-collapse border border-gray-300"> 
+                <?php
+                $first = true;
+                $columns = [];
+                    foreach($domain_result as $domain_id => $result){
+                        foreach($result as $row){
+                            if  ($first) {  
+                                echo "<tr class='bg-gray-200'>";
+                                echo "<th class='border border-gray-300 px-4 py-2'>Domain ID</th>";
+                                    foreach($row as $col => $val) {
+                                        echo "<th>{$col}</th>";
+                                        $columns[] = $col;
+                                    }
+                                echo "</tr>";
+                                $first = false;
+                            }
+                
+                            echo "<tr class='hover:bg-gray-50'>";
+                            echo "<td class='border border-gray-300 px-4 py-2'>$domain_id</td>";
+                            
+                            foreach($columns as $col) {
+                                $val = $row[$col] ?? '';
+                                echo "<td class='border border-gray-300 px-4 py-2'>$val</td>";
+                            }
+                            
+                            echo "</tr>";
+                        }
+                    }
+                 ?>               
+
+
+                <table>
+
+                    @foreach($domain_result as $domain_id => $result)
+                        <tr>
+                            <td>
+                                Domain ID: {{ $domain_id }}
+                            </td>
+                            <td>
+                                Result: <pre class="inline font-mono text-xs whitespace-pre-wrap">{{ $formatDisplayValue($result) }}</pre>
+                            </td>
+                        </tr>               
+                       
+                    @endforeach
+                </table>
+
+
             @endif
         </div>
     </div>
+   <script>
+    let parsedValues = [];
+
+    @foreach($data as $key => $value)
+        @if(str_contains($key, 'batch:latest:systems'))
+            parsedValues.push(JSON.parse(@json($value)));
+        @endif
+    @endforeach
+
+    result = {}; 
+for(a in parsedValues){
+	item = parsedValues[a];
+ 	result[item.system_info.domain_id] = item.run_select_sql.result
+	
+}
+console.log(result);
+
+</script>
 </body>
 </html>

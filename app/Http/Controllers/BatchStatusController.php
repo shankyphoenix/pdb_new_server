@@ -46,6 +46,19 @@ class BatchStatusController extends Controller
             'payload' => ['required', 'string', 'json'],
         ]);
 
+        $systemKeys = Redis::keys('batch:latest:systems:*');
+        $prefix = config('database.redis.options.prefix');
+
+        foreach ($systemKeys as $fullKey) {
+            $key = $fullKey;
+
+            if ($prefix && str_starts_with($fullKey, $prefix)) {
+                $key = substr($fullKey, strlen($prefix));
+            }
+
+            Redis::del($key);
+        }
+
         Redis::del('batch:latest:result');
 
         $payloadJson = $validated['payload'];

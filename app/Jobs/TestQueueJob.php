@@ -76,37 +76,20 @@ class TestQueueJob implements ShouldQueue
             $count = ResponseParserUtility::parseSelectCount($body);
 
             
+            $date = new \DateTime("now", new \DateTimeZone("Asia/Kolkata"));
+            Redis::set('batch:latest:updated_at', $date->format('Y-m-d H:i:s'));
+            Redis::set('batch:latest:batch_id', $this->batchId);
+            
+            $latestResponse = json_encode([
+                'system_id' => $this->systemId,
+                'url' => $url,
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'successful' => $response->successful(),
+                'at' => now()->toDateTimeString(),
+            ]);
 
-            Redis::set("batch:latest:systems:{$this->systemId}:result", json_encode($body['result'] ?? []));
-
-            if ($count > 0) {
-
-           
-                $date = new \DateTime("now", new \DateTimeZone("Asia/Kolkata"));
-
-                Redis::set('batch:latest:updated_at', $date->format('Y-m-d H:i:s'));
-
-                Redis::set('batch:latest:batch_id', $this->batchId);
-
-
-
-                if (is_numeric($count)) {
-                    Redis::incrBy('batch:latest:result', (int) $count);
-                } else {
-                    Redis::append('batch:latest:other_results', (string) $count);
-                }
-
-                $latestResponse = json_encode([
-                    'system_id' => $this->systemId,
-                    'url' => $url,
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                    'successful' => $response->successful(),
-                    'at' => now()->toDateTimeString(),
-                ]);
-
-                Redis::set("system:{$this->systemId}:latest_response", $latestResponse);
-            }
+            Redis::set("batch:latest:systems:{$this->systemId}:response", $latestResponse);
         }
 
         if ($response->successful()) {
