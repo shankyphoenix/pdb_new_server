@@ -19,8 +19,10 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/batch-status', [BatchStatusController::class, 'index']);
-Route::post('/batch-status', [BatchStatusController::class, 'store']);
+Route::middleware('auth')->group(function () {
+    Route::get('/batch-status', [BatchStatusController::class, 'index']);
+    Route::post('/batch-status', [BatchStatusController::class, 'store']);
+});
 
 
 require __DIR__.'/auth.php';
