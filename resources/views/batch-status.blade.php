@@ -81,7 +81,8 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @php
-                            $domain_result = [];        
+                        $domain_result = [];        
+                        $domain_info = [];        
                         @endphp
                         @foreach($data as $key => $value)
 
@@ -89,17 +90,23 @@
                         @if(str_contains($key, 'batch:latest:systems'))
                             @php
                                 $parsed = json_decode($value, true);
-                                if(isset($parsed['system_info']['domain_id']) && isset($parsed['run_select_sql']['result'])){
-                                    $domain_result[$parsed['system_info']['domain_id']] = $parsed['run_select_sql']['result'];
-                                }
+                                echo "<pre class='bg-gray-100 p-4 rounded text-sm text-gray-800 font-mono mb-4 overflow-x-auto'>";
+                                $parsed_body = json_decode($parsed['body'], true);
+                                print_r($parsed_body);
+                                echo "</pre>";
+
+                                $domain_result[$parsed['system_id']] = $parsed_body['result']['run_select_sql']['result'] ?? [];
+                                $domain_info[$parsed['system_id']] = $parsed['system_name'] ?? '';
+
+                                
                             @endphp
                         @endif                                                
 
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900 font-mono">
                                     {{ $key }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 break-all font-mono whitespace-pre-wrap">
+                                <td class="px-6 py-4 text-sm text-gray-600 break-all font-mono">
                                     {{ $formatDisplayValue($value) }}
                                 </td>
                             </tr>
@@ -136,23 +143,6 @@
                         }
                     }
                  ?>               
-
-
-                <table>
-
-                    @foreach($domain_result as $domain_id => $result)
-                        <tr>
-                            <td>
-                                Domain ID: {{ $domain_id }}
-                            </td>
-                            <td>
-                                Result: <pre class="inline font-mono text-xs whitespace-pre-wrap">{{ $formatDisplayValue($result) }}</pre>
-                            </td>
-                        </tr>               
-                       
-                    @endforeach
-                </table>
-
 
             @endif
         </div>
