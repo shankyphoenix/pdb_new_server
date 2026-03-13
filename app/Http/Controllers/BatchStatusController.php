@@ -63,11 +63,20 @@ class BatchStatusController extends Controller
 
         $payloadJson = $validated['payload'];
 
-        $ids = array_filter(explode(',', $validated['system_ids']));
+
+        if($validated['system_ids'] == "*") {
+            $ids = null; // This will be used to fetch all synced systems        
+        } else {    
+            $ids = array_filter(explode(',', $validated['system_ids']));
+        }        
 
         $systems = System::query()
             ->where('is_synced', 1)
-            ->whereIn('id', $ids)
+            ->when(isset($ids), function ($query) use ($ids) {
+                $query->whereIn('id', $ids);
+            })      
+            ->orderBy('company_name', 'asc') 
+            ->limit(10)      
             ->get();
 
         if ($systems->isEmpty()) {

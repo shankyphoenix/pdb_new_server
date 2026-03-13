@@ -90,10 +90,8 @@
                         @if(str_contains($key, 'batch:latest:systems'))
                             @php
                                 $parsed = json_decode($value, true);
-                                echo "<pre class='bg-gray-100 p-4 rounded text-sm text-gray-800 font-mono mb-4 overflow-x-auto'>";
+                                
                                 $parsed_body = json_decode($parsed['body'], true);
-                                print_r($parsed_body);
-                                echo "</pre>";
 
                                 $domain_result[$parsed['system_id']] = $parsed_body['result']['run_select_sql']['result'] ?? [];
                                 $domain_info[$parsed['system_id']] = $parsed['system_name'] ?? '';
@@ -123,6 +121,7 @@
                             if  ($first) {  
                                 echo "<tr class='bg-gray-200'>";
                                 echo "<th class='border border-gray-300 px-4 py-2'>Domain ID</th>";
+                                echo "<th class='border border-gray-300 px-4 py-2'>Domain Name</th>";
                                     foreach($row as $col => $val) {
                                         echo "<th>{$col}</th>";
                                         $columns[] = $col;
@@ -133,6 +132,7 @@
                 
                             echo "<tr class='hover:bg-gray-50'>";
                             echo "<td class='border border-gray-300 px-4 py-2'>$domain_id</td>";
+                            echo "<td class='border border-gray-300 px-4 py-2'>{$domain_info[$domain_id]}</td>";
                             
                             foreach($columns as $col) {
                                 $val = $row[$col] ?? '';
