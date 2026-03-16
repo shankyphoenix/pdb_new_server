@@ -3,8 +3,12 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BatchStatusController;
+use App\Models\User;
+use App\Http\Controllers\TestController;
 
-Route::get('/', function () {
+
+Route::get('/hello', function () {
+    dump(User::first()->name);
     return view('welcome');
 });
 
@@ -23,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/batch-status', [BatchStatusController::class, 'index']);
     Route::post('/batch-status', [BatchStatusController::class, 'store']);
 });
+
+Route::get('/authorize_ip', [TestController::class, 'authorize_ip']);
+
 
 
 require __DIR__.'/auth.php';
