@@ -64,9 +64,9 @@ class TestController extends Controller
     $filepath = config('pdb.duckdb_file');
 
     $combined = $duck->query("
-        SELECT * FROM read_csv_auto('$filepath') limit 10
+        SELECT system_name FROM '$filepath' limit 10
     ");
-    dump($combined);
+    
 
 
         $request = request();

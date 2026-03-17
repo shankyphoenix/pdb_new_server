@@ -21,6 +21,6 @@ class DuckService
             throw new \Exception("DuckDB Error: " . $result->errorOutput());
         }
 
-        return collect(json_decode($result->output(), true));
+        return collect(json_decode($result->output()));
     }
 }
