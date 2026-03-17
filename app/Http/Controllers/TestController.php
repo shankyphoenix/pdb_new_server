@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use DB;
+use App\Services\DuckService;
+
 
 class TestController extends Controller
 {
@@ -49,7 +51,23 @@ class TestController extends Controller
     }
 
  
-    function authorize_ip() {
+    function authorize_ip(DuckService $duck) {
+
+/*     // 1. Query a remote or local Parquet file directly
+    $stats = $duck->query("
+        SELECT label 
+        FROM '/var/www/html/pdb_new_server/output.csv' 
+        limit 1        
+    "); */
+
+    // 2. Join a CSV file with a JSON file
+    $filepath = config('pdb.duckdb_file');
+
+    $combined = $duck->query("
+        SELECT * FROM read_csv_auto('$filepath') limit 10
+    ");
+    dump($combined);
+
 
         $request = request();
         $show_otp = false;

@@ -19,4 +19,6 @@ return [
     'newdist_database' => env('DB_DATABASE3', ''),
     'newdist_username' => env('DB_USERNAME3', ''),
     'newdist_password' => env('DB_PASSWORD3', ''),
+    'duckdb_path' => env('DUCKDB_PATH', ''),
+    'duckdb_file' => env('DUCKDB_FILE', ''),
 ];
