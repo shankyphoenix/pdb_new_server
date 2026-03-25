@@ -76,7 +76,7 @@ class BatchStatusController extends Controller
                 $query->whereIn('id', $ids);
             })      
             ->orderBy('company_name', 'asc') 
-            ->limit(40)      
+            ->limit(140)      
             ->get();
 
         if ($systems->isEmpty()) {
