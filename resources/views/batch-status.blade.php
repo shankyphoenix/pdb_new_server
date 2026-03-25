@@ -94,7 +94,9 @@
                                 $parsed_body = json_decode($parsed['body'] ?? 'null', true);
 
                                 $raw_result = $parsed_body['result']['run_select_sql']['result'] ?? [];
-                                $domain_result[$parsed['system_id']] = is_array($raw_result) ? $raw_result : [];
+                                $domain_result[$parsed['system_id']] = is_array($raw_result)
+                                    ? $raw_result
+                                    : ['error' => $raw_result];
                                 $domain_info[$parsed['system_id']] = $parsed['system_name'] ?? '';
 
                                 
@@ -118,6 +120,16 @@
                 $first = true;
                 $columns = [];
                     foreach($domain_result as $domain_id => $result){
+                        // String result was stored as ['error' => '...']
+                        if (isset($result['error'])) {
+                            echo "<tr class='bg-red-50'>";
+                            echo "<td class='border border-gray-300 px-4 py-2 text-gray-700 font-mono'>" . htmlspecialchars($domain_id) . "</td>";
+                            echo "<td class='border border-gray-300 px-4 py-2 text-gray-700'>" . htmlspecialchars($domain_info[$domain_id] ?? '') . "</td>";
+                            echo "<td class='border border-red-300 px-4 py-2 text-red-700 font-mono' colspan='99'>" . htmlspecialchars($result['error']) . "</td>";
+                            echo "</tr>";
+                            continue;
+                        }
+
                         foreach($result as $row){
                             if  ($first) {  
                                 echo "<tr class='bg-gray-200'>";
