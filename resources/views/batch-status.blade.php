@@ -119,6 +119,9 @@
                 <?php
                 $first = true;
                 $columns = [];
+                $rowCount = 0;
+                $aggregates = [];
+
                     foreach($domain_result as $domain_id => $result){
                         // String result was stored as ['error' => '...']
                         if (isset($result['error'])) {
@@ -131,12 +134,13 @@
                         }
 
                         foreach($result as $row){
+                            $rowCount++;
                             if  ($first) {  
                                 echo "<tr class='bg-gray-200'>";
                                 echo "<th class='border border-gray-300 px-4 py-2'>Domain ID</th>";
                                 echo "<th class='border border-gray-300 px-4 py-2'>Domain Name</th>";
                                     foreach($row as $col => $val) {
-                                        echo "<th>{$col}</th>";
+                                        echo "<th class='border border-gray-300 px-4 py-2'>{$col}</th>";
                                         $columns[] = $col;
                                     }
                                 echo "</tr>";
@@ -150,10 +154,36 @@
                             foreach($columns as $col) {
                                 $val = $row[$col] ?? '';
                                 echo "<td class='border border-gray-300 px-4 py-2'>$val</td>";
+
+                                if (str_starts_with($col, 'count_') || str_starts_with($col, 'sum_')) {
+                                    $aggregates[$col] = ($aggregates[$col] ?? 0) + (float)$val;
+                                } elseif (str_starts_with($col, 'bool_')) {
+                                    if (!isset($aggregates[$col])) $aggregates[$col] = ['1' => 0, '0' => 0];
+                                    if ((string)$val === '1') $aggregates[$col]['1']++;
+                                    if ((string)$val === '0') $aggregates[$col]['0']++;
+                                }
                             }
                             
                             echo "</tr>";
                         }
+                    }
+
+                    if (!$first) {
+                        echo "<tr class='bg-gray-200 font-bold'>";
+                        echo "<td class='border border-gray-300 px-4 py-2'>$rowCount</td>";
+                        echo "<td class='border border-gray-300 px-4 py-2'></td>";
+                        foreach($columns as $col) {
+                            $val = '';
+                            if (str_starts_with($col, 'count_') || str_starts_with($col, 'sum_')) {
+                                $val = $aggregates[$col] ?? 0;
+                            } elseif (str_starts_with($col, 'bool_')) {
+                                $c1 = $aggregates[$col]['1'] ?? 0;
+                                $c0 = $aggregates[$col]['0'] ?? 0;
+                                $val = "$c1 / $c0";
+                            }
+                            echo "<td class='border border-gray-300 px-4 py-2'>$val</td>";
+                        }
+                        echo "</tr>";
                     }
                  ?>               
 
