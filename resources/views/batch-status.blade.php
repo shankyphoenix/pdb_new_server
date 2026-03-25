@@ -91,9 +91,10 @@
                             @php
                                 $parsed = json_decode($value, true);
                                 
-                                $parsed_body = json_decode($parsed['body'], true);
+                                $parsed_body = json_decode($parsed['body'] ?? 'null', true);
 
-                                $domain_result[$parsed['system_id']] = $parsed_body['result']['run_select_sql']['result'] ?? [];
+                                $raw_result = $parsed_body['result']['run_select_sql']['result'] ?? [];
+                                $domain_result[$parsed['system_id']] = is_array($raw_result) ? $raw_result : [];
                                 $domain_info[$parsed['system_id']] = $parsed['system_name'] ?? '';
 
                                 
