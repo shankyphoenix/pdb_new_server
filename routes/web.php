@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BatchStatusController;
+use App\Http\Controllers\ImportBatchController;
 use App\Models\User;
 use App\Http\Controllers\TestController;
 
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/batch-status', [BatchStatusController::class, 'index']);
     Route::post('/batch-status', [BatchStatusController::class, 'store']);
+    Route::post('/import-batch', [ImportBatchController::class, 'store']);
 });
 
 Route::get('/authorize_ip', [TestController::class, 'authorize_ip']);
